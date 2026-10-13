@@ -1,6 +1,27 @@
 media:
-  input: source/img
-  output: /img
+  - name: images
+    label: 图片
+    input: source/img
+    output: /img
+    categories: [image]
+  - name: files
+    label: 附件
+    input: source/files
+    output: /files
+    extensions:
+      - pdf
+      - zip
+      - 7z
+      - rar
+      - txt
+      - md
+      - csv
+      - docx
+      - xlsx
+      - pptx
+      - apk
+      - deb
+      - iso
 
 content:
   - name: posts
