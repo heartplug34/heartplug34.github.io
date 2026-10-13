@@ -21,6 +21,9 @@ about:
   enable: true
   banner_img: /img/default.png
   banner_img_height: 60
+  avatar: /img/avatar.png
+  name: "heartplug34"
+  intro: "记录折腾、系统与硬件"
 dark_mode:
   enable: true
   default: auto
