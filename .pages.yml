@@ -13,6 +13,9 @@ media:
       - zip
       - 7z
       - rar
+      - tar
+      - gz
+      - xz
       - txt
       - md
       - csv
@@ -21,7 +24,13 @@ media:
       - pptx
       - apk
       - deb
+      - exe
+      - msi
+      - dmg
       - iso
+      - img
+      - bin
+      - jar
 
 content:
   - name: posts
