@@ -1,0 +1,26 @@
+navbar:
+  blog_title: "个人博客记录"
+  menu:
+    - { key: "home", link: "/", icon: "iconfont icon-home-fill" }
+    - { key: "archive", link: "/archives/", icon: "iconfont icon-archive-fill" }
+    - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
+    - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
+    - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
+search:
+  enable: true
+index:
+  banner_img: /img/default.png
+  banner_img_height: 70
+  slogan:
+    enable: true
+    text: "记录折腾、系统与硬件"
+post:
+  banner_img: /img/default.png
+  banner_img_height: 70
+about:
+  enable: true
+  banner_img: /img/default.png
+  banner_img_height: 60
+dark_mode:
+  enable: true
+  default: auto
