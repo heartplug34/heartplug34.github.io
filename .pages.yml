@@ -8,7 +8,9 @@ content:
     type: collection
     path: source/_posts
     format: yaml-frontmatter
-    filename: "{primary}.md"
+    filename:
+      template: "{year}-{month}-{day}-{hour}{minute}{second}.md"
+      field: create
     view:
       primary: title
       sort: date
