@@ -1,0 +1,256 @@
+name: Build and Deploy Hexo Blog
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate site files (first run only)
+        run: |
+          set -e
+          mkdir -p source/_posts source/about scaffolds
+
+          if [ ! -f "package.json" ]; then
+          cat > package.json <<'WB_EOF'
+          {
+            "name": "heartplug34-blog",
+            "private": true,
+            "version": "1.0.0",
+            "scripts": {
+              "build": "hexo generate",
+              "clean": "hexo clean",
+              "server": "hexo server"
+            },
+            "hexo": {
+              "version": "8.1.2"
+            },
+            "dependencies": {
+              "hexo": "8.1.2",
+              "hexo-generator-archive": "2.0.0",
+              "hexo-generator-category": "2.0.0",
+              "hexo-generator-index": "4.0.0",
+              "hexo-generator-tag": "2.0.0",
+              "hexo-renderer-ejs": "2.0.0",
+              "hexo-renderer-marked": "7.0.1",
+              "hexo-renderer-stylus": "3.0.1",
+              "hexo-server": "3.0.0",
+              "hexo-theme-fluid": "1.9.9",
+              "nunjucks": "3.2.4"
+            }
+          }
+          WB_EOF
+          fi
+
+          if [ ! -f ".gitignore" ]; then
+          cat > .gitignore <<'WB_EOF'
+          node_modules/
+          public/
+          db.json
+          .deploy_git/
+          *.log
+          .DS_Store
+          Thumbs.db
+          WB_EOF
+          fi
+
+          if [ ! -f "_config.yml" ]; then
+          cat > _config.yml <<'WB_EOF'
+          title: 个人博客记录
+          subtitle: '记录折腾、系统与硬件'
+          description: '个人博客记录'
+          author: 个人博客记录
+          language: zh-CN
+          timezone: 'Asia/Shanghai'
+          url: https://heartplug34.github.io
+          root: /
+          permalink: :year/:month/:day/:title/
+          pretty_urls:
+            trailing_index: false
+            trailing_html: false
+          source_dir: source
+          public_dir: public
+          tag_dir: tags
+          archive_dir: archives
+          category_dir: categories
+          new_post_name: :title.md
+          default_layout: post
+          render_drafts: false
+          post_asset_folder: false
+          relative_link: false
+          future: true
+          syntax_highlighter: highlight.js
+          highlight:
+            line_number: true
+            auto_detect: false
+            tab_replace: ''
+            wrap: true
+            hljs: false
+          default_category: uncategorized
+          date_format: YYYY-MM-DD
+          time_format: HH:mm:ss
+          updated_option: 'mtime'
+          per_page: 10
+          pagination_dir: page
+          theme: fluid
+          index_generator:
+            path: ''
+            per_page: 10
+            order_by: -date
+          archive_generator:
+            enabled: true
+            per_page: 20
+            yearly: true
+            monthly: true
+            order_by: -date
+          category_generator:
+            per_page: 10
+          tag_generator:
+            per_page: 10
+          WB_EOF
+          fi
+
+          if [ ! -f "_config.fluid.yml" ]; then
+          cat > _config.fluid.yml <<'WB_EOF'
+          navbar:
+            blog_title: "个人博客记录"
+            menu:
+              - { key: "home", link: "/", icon: "iconfont icon-home-fill" }
+              - { key: "archive", link: "/archives/", icon: "iconfont icon-archive-fill" }
+              - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
+              - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
+              - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
+          search:
+            enable: true
+          index:
+            banner_img: /img/default.png
+            banner_img_height: 70
+            slogan:
+              enable: true
+              text: "记录折腾、系统与硬件"
+          post:
+            banner_img: /img/default.png
+            banner_img_height: 70
+          about:
+            enable: true
+            banner_img: /img/default.png
+            banner_img_height: 60
+          dark_mode:
+            enable: true
+            default: auto
+          WB_EOF
+          fi
+
+          if [ ! -f "source/_posts/hello.md" ]; then
+          cat > source/_posts/hello.md <<'WB_EOF'
+          ---
+          title: 本站已上线
+          date: 2026-10-13 10:20:00
+          tags:
+            - 随笔
+          categories:
+            - 公告
+          ---
+
+          这里是**个人博客记录**，基于 [Hexo](https://hexo.io) 与 [Fluid](https://github.com/fluid-dev/hexo-theme-fluid) 主题搭建。
+
+          ## 这个站点怎么用
+
+          - 文章写在 `source/_posts/` 目录下，格式为 Markdown
+          - 提交到 `main` 分支后会自动触发构建，约 1 分钟即可在线上看到更新
+          - 导航栏的**归档**、**分类**、**标签**页会自动汇总文章
+
+          ## 写一篇新文章
+
+          在 `source/_posts/` 下新建 `.md` 文件，开头这样写：
+
+          ```markdown
+          ---
+          title: 文章标题
+          date: 2026-10-13 10:20:00
+          tags:
+            - 标签一
+          categories:
+            - 分类一
+          ---
+
+          正文……
+          ```
+          WB_EOF
+          fi
+
+          if [ ! -f "source/about/index.md" ]; then
+          cat > source/about/index.md <<'WB_EOF'
+          ---
+          title: 关于
+          date: 2026-10-13 10:20:00
+          layout: about
+          ---
+
+          这里写一段自我介绍。
+
+          - 折腾方向：Linux、老旧硬件、系统调优
+          WB_EOF
+          fi
+
+
+      - name: Commit generated files
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: generate site files"
+            git push
+          else
+            echo "nothing to commit"
+          fi
+
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build site
+        run: npx hexo clean && npx hexo generate
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
